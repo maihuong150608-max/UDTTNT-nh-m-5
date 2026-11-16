@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartLogistics AI Enterprise - Intelligence In Motion</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js cho các biểu đồ BI & Dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darker: '#070b14',
+                        darkcard: '#0f172a',
+                        accent: '#10b981', // Emerald Green
+                        accenthover: '#059669',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darker text-gray-100 font-sans min-h-screen flex flex-col">
+
+    <!-- HEADER / NAVBAR -->
+    <header class="bg-darkcard border-b border-gray-800 sticky top-0 z-50 px-6 py-3.5 flex justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="bg-accent/20 p-2.5 rounded-xl border border-accent/40 text-accent text-xl">
+                <i class="fa-solid fa-truck-fast"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-base tracking-wide text-white">SMARTLOGISTICS AI <span class="text-[10px] bg-accent/20 text-accent px-2 py-0.5 rounded-full border border-accent/30 ml-2">v3.5 Enterprise</span></h1>
+                <p class="text-[11px] text-gray-400 italic">"INTELLIGENCE IN MOTION" — Hệ thống Điều phối & Dự báo ETA</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="hidden xl:flex items-center space-x-2 bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-800 text-xs text-gray-300">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Kafka & Spark Streaming: <strong class="text-emerald-400">Hoạt động ổn định (99.99%)</strong></span>
+            </div>
+            <div class="flex items-center space-x-2 bg-darker px-3 py-1.5 rounded-lg border border-gray-800">
+                <i class="fa-solid fa-user-shield text-accent text-sm"></i>
+                <span class="text-xs font-medium">Xin chào, <strong class="text-white">Nhóm 5</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="w-64 bg-darkcard border-r border-gray-800 flex flex-col justify-between hidden md:flex">
+            <nav class="p-4 space-y-1.5 overflow-y-auto max-h-[calc(100vh-120px)]">
+                <p class="text-[10px] font-semibold tracking-wider text-gray-500 uppercase px-3 pb-2">Modules Điều Hành & AI</p>
+                
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium bg-accent text-darker transition shadow-sm">
+                    <i class="fa-solid fa-chart-pie w-4"></i>
+                    <span>1. Control Tower & KPI</span>
+                </button>
+                <button onclick="switchTab('orders')" id="nav-orders" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-300 hover:bg-gray-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-boxes-stacked w-4"></i>
+                    <span>2. Quản lý Đơn & AI ETA</span>
+                </button>
+                <button onclick="switchTab('dispatch')" id="nav-dispatch" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-300 hover:bg-gray-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-route w-4"></i>
+                    <span>3. Điều phối & Ngoại lệ (CoT)</span>
+                </button>
+                <button onclick="switchTab('promptlab')" id="nav-promptlab" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-300 hover:bg-gray-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-wand-magic-sparkles w-4 text-amber-400"></i>
+                    <span>4. Prompt Engineering Lab</span>
+                </button>
+                <button onclick="switchTab('incident')" id="nav-incident" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-300 hover:bg-gray-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-triangle-exclamation w-4 text-red-400"></i>
+                    <span>5. Phân tích Sự cố (TX-05)</span>
+                </button>
+                <button onclick="switchTab('chatbot')" id="nav-chatbot" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-300 hover:bg-gray-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-robot w-4 text-cyan-400"></i>
+                    <span>6. Trợ lý ảo LogiBot (NLP)</span>
+                </button>
+                <button onclick="switchTab('powerbi')" id="nav-powerbi" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-300 hover:bg-gray-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-file-csv w-4 text-emerald-400"></i>
+                    <span>7. Tích hợp Power BI & DAX</span>
+                </button>
+                <button onclick="switchTab('driverapp')" id="nav-driverapp" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-300 hover:bg-gray-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-mobile-screen-button w-4"></i>
+                    <span>8. Driver App UI (Figma)</span>
+                </button>
+                <button onclick="switchTab('iot')" id="nav-iot" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-300 hover:bg-gray-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-microchip w-4 text-cyan-300"></i>
+                    <span>9. Smart IoT Vehicle</span>
+                </button>
+                <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium text-gray-300 hover:bg-gray-800/60 hover:text-white transition">
+                    <i class="fa-solid fa-database w-4 text-purple-400"></i>
+                    <span>10. Quản trị Dữ liệu & Backup</span>
+                </button>
+            </nav>
+            <div class="p-4 border-t border-gray-800">
+                <div class="bg-gray-900/80 p-3 rounded-lg border border-gray-800">
+                    <p class="text-[11px] font-semibold text-emerald-400 mb-1"><i class="fa-solid fa-shield-halved mr-1"></i> Bảo mật NĐ 13/2023</p>
+                    <p class="text-[10px] text-gray-400 leading-normal">Đã che SĐT tự động & kiểm soát quyền truy cập dữ liệu.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT CONTAINER -->
+        <main class="flex-1 overflow-y-auto p-6 bg-darker">
+
+            <!-- MODULE 1: CONTROL TOWER & KPI DASHBOARD -->
+            <section id="tab-dashboard" class="space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-accent"></i> Control Tower & KPI Dashboard Tổng Quan
+                        </h2>
+                        <p class="text-xs text-gray-400">Theo dõi toàn diện thời gian thực các chỉ số vận hành và rủi ro SLA.</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <select id="kpiFilterRegion" onchange="updateKPIs()" class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                            <option value="ALL">Tất cả khu vực</option>
+                            <option value="Hà Nội">Hà Nội</option>
+                            <option value="Hải Dương">Hải Dương</option>
+                            <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                        </select>
+                        <button onclick="updateKPIs()" class="bg-gray-800 hover:bg-gray-700 text-xs px-3 py-2 rounded-lg border border-gray-700 text-gray-300"><i class="fa-solid fa-rotate-right"></i></button>
+                    </div>
+                </div>
+
+                <!-- CARDS KPI -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-darkcard border border-gray-800 p-4 rounded-xl shadow-sm">
+                        <p class="text-xs text-gray-400 font-medium">Tổng Đơn Hàng (Total Orders)</p>
+                        <h3 id="kpi-total" class="text-2xl font-bold text-white mt-1">0</h3>
+                        <p class="text-[11px] text-emerald-400 mt-2"><i class="fa-solid fa-arrow-trend-up"></i> Đồng bộ từ Database</p>
+                    </div>
+                    <div class="bg-darkcard border border-gray-800 p-4 rounded-xl shadow-sm">
+                        <p class="text-xs text-gray-400 font-medium">Tỷ lệ Giao Đúng Hạn (On-Time)</p>
+                        <h3 id="kpi-ontime-rate" class="text-2xl font-bold text-emerald-400 mt-1">0%</h3>
+                        <p class="text-[11px] text-emerald-400 mt-2"><i class="fa-solid fa-shield"></i> Mục tiêu chuẩn &gt;95%</p>
+                    </div>
+                    <div class="bg-darkcard border border-gray-800 p-4 rounded-xl shadow-sm">
+                        <p class="text-xs text-gray-400 font-medium">Đơn Trễ Hạn SLA (Overdue)</p>
+                        <h3 id="kpi-overdue" class="text-2xl font-bold text-red-400 mt-1">0</h3>
+                        <p class="text-[11px] text-red-400 mt-2"><i class="fa-solid fa-triangle-exclamation"></i> Cần xử lý gấp</p>
+                    </div>
+                    <div class="bg-darkcard border border-gray-800 p-4 rounded-xl shadow-sm">
+                        <p class="text-xs text-gray-400 font-medium">Đơn Rủi Ro Cao AI (Risk ≥ 70)</p>
+                        <h3 id="kpi-risk" class="text-2xl font-bold text-amber-400 mt-1">0</h3>
+                        <p class="text-[11px] text-amber-400 mt-2"><i class="fa-solid fa-clock"></i> Khung giờ cao điểm 17h-19h</p>
+                    </div>
+                </div>
+
+                <!-- CHARTS GRID -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-darkcard border border-gray-800 p-5 rounded-xl shadow-sm flex flex-col justify-between">
+                        <h3 class="text-xs font-semibold text-white mb-2"><i class="fa-solid fa-chart-pie text-accent mr-1"></i> Phân Bổ Trạng Thái Đơn Hàng</h3>
+                        <div class="h-60 relative flex items-center justify-center">
+                            <canvas id="statusDonutChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-darkcard border border-gray-800 p-5 rounded-xl shadow-sm lg:col-span-2 flex flex-col justify-between">
+                        <h3 class="text-xs font-semibold text-white mb-2"><i class="fa-solid fa-chart-column text-accent mr-1"></i> Sản Lượng Đơn & Tỷ Lệ Trễ Hạn Theo Khung Giờ (Peak Hours 17:00–19:00)</h3>
+                        <div class="h-60">
+                            <canvas id="hourlyBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 2: ORDER MANAGEMENT & AI ETA PREDICTION -->
+            <section id="tab-orders" class="space-y-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-boxes-stacked text-accent"></i> Quản lý Đơn hàng & Mô phỏng ETA (Rule-based / AI Simulation)
+                        </h2>
+                        <p class="text-xs text-gray-400">Tạo, chỉnh sửa, xóa và theo dõi thời gian giao hàng dự kiến dựa trên các yếu tố ngoại cảnh.</p>
+                    </div>
+                    <button onclick="openOrderModal('add')" class="bg-accent hover:bg-accenthover text-darker font-semibold text-xs px-4 py-2 rounded-lg flex items-center gap-2 transition">
+                        <i class="fa-solid fa-plus"></i> Tạo Đơn Hàng Mới
+                    </button>
+                </div>
+
+                <div class="bg-darkcard border border-gray-800 p-4 rounded-xl flex flex-wrap gap-4 items-center justify-between">
+                    <input type="text" id="orderSearch" oninput="renderOrdersTable()" placeholder="Tìm kiếm mã đơn, khách hàng, tài xế..." class="w-full md:w-72 bg-gray-900 border border-gray-800 rounded-lg px-3.5 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                    <div class="flex items-center space-x-3">
+                        <select id="filterStatus" onchange="renderOrdersTable()" class="bg-gray-900 border border-gray-800 rounded-lg px-3.5 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                            <option value="ALL">Tất cả trạng thái</option>
+                            <option value="Pending">Pending</option>
+                            <option value="In Transit">In Transit</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <select id="filterRisk" onchange="renderOrdersTable()" class="bg-gray-900 border border-gray-800 rounded-lg px-3.5 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                            <option value="ALL">Tất cả mức độ rủi ro</option>
+                            <option value="HIGH">Risk: High</option>
+                            <option value="MEDIUM">Risk: Medium</option>
+                            <option value="LOW">Risk: Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-darkcard border border-gray-800 rounded-xl overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-gray-300">
+                            <thead class="bg-gray-900 text-gray-400 uppercase font-semibold border-b border-gray-800">
+                                <tr>
+                                    <th class="px-4 py-3">Mã Đơn</th>
+                                    <th class="px-4 py-3">Khách Hàng (Đã ẩn SĐT)</th>
+                                    <th class="px-4 py-3">Tuyến Đường</th>
+                                    <th class="px-4 py-3">ETA Cố Định</th>
+                                    <th class="px-4 py-3 text-accent font-bold">ETA AI (Mô phỏng)</th>
+                                    <th class="px-4 py-3">Tài Xế</th>
+                                    <th class="px-4 py-3">Trạng Thái</th>
+                                    <th class="px-4 py-3 text-right">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody" class="divide-y divide-gray-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 3: AI DISPATCH & EXCEPTION MANAGEMENT -->
+            <section id="tab-dispatch" class="space-y-6 hidden">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-route text-accent"></i> Điều phối Tự động & Xử lý Ngoại lệ (Chain-of-Thought)
+                    </h2>
+                    <p class="text-xs text-gray-400">Giải quyết tình huống sự cố phương tiện và điều phối lại đơn hàng theo thuật toán tối ưu.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-darkcard border border-gray-800 p-5 rounded-xl space-y-4">
+                        <span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded text-xs font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Tình huống mẫu</span>
+                        <h3 class="text-sm font-bold text-white">Tài xế TX-05 gặp sự cố hỏng xe tại điểm giao thứ 3</h3>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            - <strong>Sự cố:</strong> Cần 45 phút sửa chữa.<br>
+                            - <strong>Tồn đọng:</strong> Còn 5 đơn hàng sắp hết hạn SLA trong vòng 60 phút tới.<br>
+                            - <strong>Phân tích AI:</strong> Nếu chờ sửa xe sẽ có 4/5 đơn vi phạm SLA. Hệ thống đề xuất san tải sang tài xế hỗ trợ <strong>TX-102</strong> ở bán kính 1.8 km.
+                        </p>
+                        <button onclick="executeDispatchScenario()" class="w-full bg-accent hover:bg-accenthover text-darker font-semibold text-xs py-2.5 rounded-lg transition">
+                            <i class="fa-solid fa-bolt mr-1"></i> Xác Nhận Thực Thi Điều Phối Lại
+                        </button>
+                    </div>
+
+                    <div class="bg-darkcard border border-gray-800 p-5 rounded-xl space-y-4">
+                        <h3 class="text-sm font-bold text-white"><i class="fa-solid fa-clock-rotate-left text-accent mr-1"></i> Lịch Sử Điều Phối & Nhật Ký Xử Lý</h3>
+                        <div id="dispatchLogBox" class="bg-gray-900 border border-gray-800 p-3 rounded-lg text-xs space-y-2 h-48 overflow-y-auto text-gray-300">
+                            <p class="text-gray-500">[11:00] Hệ thống khởi động bình thường. Không có ngoại lệ.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 4: PROMPT ENGINEERING LAB -->
+            <section id="tab-promptlab" class="space-y-6 hidden">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Prompt Engineering Lab (5 Thành Phần Chuẩn)
+                    </h2>
+                    <p class="text-xs text-gray-400">Thực nghiệm cấu trúc prompt chuẩn hóa (Role, Task, Input, Constraints, Output) để phân tích rủi ro đơn hàng.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-darkcard border border-gray-800 p-5 rounded-xl space-y-3">
+                        <label class="text-xs font-semibold text-gray-300 block">Soạn thảo Prompt mô phỏng:</label>
+                        <textarea id="labPromptInput" rows="8" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-3 text-xs text-white font-mono focus:outline-none focus:border-accent">Role: Senior Dispatcher với 10 năm kinh nghiệm điều phối Logistics chặng cuối.
+Task: Phân tích đơn hàng DH-8821, dự báo nguy cơ trễ SLA và đề xuất phương án xử lý.
+Input: Order ID: DH-8821, Distance Remaining: 4.8 km, SLA Remaining: 15 minutes, Driver: TX-104, Weather: Heavy Rain, Traffic: Localized Congestion.
+Constraints: Phân loại High/Medium/Low, dự báo số phút trễ, không đưa nhận định thiếu căn cứ, trả lời dưới 150 từ.
+Output: Trả về bảng gồm Risk Level, Predicted Delay Minutes và Recommended Dispatch Action.</textarea>
+                        <button onclick="runPromptLab()" class="w-full bg-amber-500 hover:bg-amber-600 text-darker font-semibold text-xs py-2.5 rounded-lg transition">
+                            <i class="fa-solid fa-play mr-1"></i> Chạy Thực Nghiệm Prompt (Mô phỏng API)
+                        </button>
+                    </div>
+                    <div class="bg-darkcard border border-gray-800 p-5 rounded-xl space-y-3 flex flex-col">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold text-white">Kết quả phản hồi (Simulated Response):</span>
+                            <button onclick="copyPromptResult()" class="text-xs text-accent hover:underline"><i class="fa-solid fa-copy mr-1"></i> Sao chép</button>
+                        </div>
+                        <div id="labPromptOutput" class="flex-1 bg-gray-900 border border-gray-800 p-3 rounded-lg text-xs text-gray-200 font-mono overflow-y-auto whitespace-pre-wrap">
+                            Nhấn "Chạy Thực Nghiệm Prompt" để xem kết quả trả về từ mô hình AI...
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 5: INCIDENT ANALYSIS -->
+            <section id="tab-incident" class="space-y-6 hidden">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-red-400"></i> Phân tích Sự cố Nâng cao (Tình huống TX-05)
+                    </h2>
+                    <p class="text-xs text-gray-400">Đánh giá chi tiết phương án xử lý rủi ro khi tài xế gặp sự cố trên đường.</p>
+                </div>
+
+                <div class="bg-darkcard border border-gray-800 p-5 rounded-xl space-y-4">
+                    <h3 class="text-sm font-bold text-white">Bảng so sánh phương án giải quyết sự cố TX-05</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-gray-300">
+                            <thead class="bg-gray-900 text-gray-400 border-b border-gray-800">
+                                <tr>
+                                    <th class="px-4 py-3">Tiêu chí so sánh</th>
+                                    <th class="px-4 py-3">Phương án 1: Chờ sửa xe (45 phút)</th>
+                                    <th class="px-4 py-3 text-accent">Phương án 2: San tải sang TX-102 (Tối ưu)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800">
+                                <tr>
+                                    <td class="px-4 py-3 font-semibold">Tỷ lệ vi phạm SLA</td>
+                                    <td class="px-4 py-3 text-red-400">80% (4/5 đơn trễ hạn)</td>
+                                    <td class="px-4 py-3 text-emerald-400">0% (Giao đúng hạn)</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-semibold">Chi phí phát sinh</td>
+                                    <td class="px-4 py-3">Thấp (Phí sửa xe)</td>
+                                    <td class="px-4 py-3">Trung bình (Chi phí hỗ trợ tuyến)</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-semibold">Điểm đánh giá CSKH</td>
+                                    <td class="px-4 py-3 text-red-400">Kém (Nhiều khiếu nại)</td>
+                                    <td class="px-4 py-3 text-emerald-400">Rất cao (Trải nghiệm tốt)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 6: LOGIBOT AI ASSISTANT -->
+            <section id="tab-chatbot" class="space-y-6 hidden">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-robot text-cyan-400"></i> Trợ lý Ảo LogiBot (NLP & Tra cứu Database)
+                    </h2>
+                    <p class="text-xs text-gray-400">Tra cứu thông tin đơn hàng thực tế từ cơ sở dữ liệu website, bảo mật SĐT theo NĐ 13/2023/NĐ-CP.</p>
+                </div>
+
+                <div class="bg-darkcard border border-gray-800 rounded-xl overflow-hidden shadow-sm flex flex-col h-[480px]">
+                    <div class="bg-gray-900 px-4 py-3 border-b border-gray-800 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-accent text-sm"><i class="fa-solid fa-robot"></i></div>
+                            <div>
+                                <h4 class="text-xs font-bold text-white">LogiBot Assistant</h4>
+                                <p class="text-[10px] text-emerald-400">Online | Tích hợp NER & Few-Shot Prompting</p>
+                            </div>
+                        </div>
+                        <span class="text-[10px] bg-gray-800 text-gray-300 px-2 py-1 rounded border border-gray-700">Mã hóa SĐT: 090*****89</span>
+                    </div>
+
+                    <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
+                        <div class="flex items-start space-x-2">
+                            <div class="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center text-accent shrink-0"><i class="fa-solid fa-robot text-xs"></i></div>
+                            <div class="bg-gray-900 border border-gray-800 p-3 rounded-2xl rounded-tl-none max-w-md text-gray-200">
+                                Xin chào Lê Thị Mai Hương! Tôi là LogiBot. Bạn có thể hỏi tôi tra cứu mã đơn hàng (ví dụ: "Kiểm tra đơn hàng DH-8821") hoặc hỏi về quy trình giao nhận.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-gray-900 border-t border-gray-800 flex items-center space-x-2">
+                        <input type="text" id="chatInput" onkeypress="handleChatKey(event)" placeholder="Nhập mã đơn hàng cần tra cứu..." class="flex-1 bg-gray-900 border border-gray-800 rounded-lg px-4 py-2.5 text-xs text-white focus:outline-none focus:border-accent">
+                        <button onclick="sendChat()" class="bg-accent hover:bg-accenthover text-darker font-semibold px-4 py-2.5 rounded-lg text-xs transition">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 7: POWER BI DATA INTEGRATION -->
+            <section id="tab-powerbi" class="space-y-6 hidden">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-file-csv text-emerald-400"></i> Tích hợp Power BI & DAX Formulas
+                    </h2>
+                    <p class="text-xs text-gray-400">Xuất dữ liệu CSV chuẩn hóa và cung cấp công thức DAX chính thức phục vụ Chương 3.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-darkcard border border-gray-800 p-5 rounded-xl space-y-3">
+                        <h3 class="text-xs font-bold text-white"><i class="fa-solid fa-download text-accent mr-1"></i> Xuất Dữ Liệu (Data Export)</h3>
+                        <p class="text-xs text-gray-300">Tải xuống tệp CSV đồng bộ trực tiếp từ cơ sở dữ liệu hiện tại của hệ thống để nạp vào Power BI Desktop.</p>
+                        <div class="flex space-x-3 pt-2">
+                            <button onclick="exportCSV('FactOrders')" class="bg-emerald-500 hover:bg-emerald-600 text-darker font-semibold text-xs px-4 py-2.5 rounded-lg transition">
+                                <i class="fa-solid fa-file-arrow-down mr-1"></i> Tải FactOrders.csv
+                            </button>
+                            <button onclick="exportCSV('DimShippers')" class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs px-4 py-2.5 rounded-lg border border-gray-700 transition">
+                                <i class="fa-solid fa-file-arrow-down mr-1"></i> Tải DimShippers.csv
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-darkcard border border-gray-800 p-5 rounded-xl space-y-3">
+                        <h3 class="text-xs font-bold text-white"><i class="fa-solid fa-code text-accent mr-1"></i> Bộ Công Thức DAX (Data Analysis Expressions)</h3>
+                        <div class="bg-gray-900 border border-gray-800 p-3 rounded-lg text-[11px] font-mono text-gray-300 space-y-2">
+                            <p><strong>1. Total_Orders:</strong><br><code>Total_Orders = COUNTROWS(FactOrders)</code></p>
+                            <p><strong>2. OnTime_Delivery_Rate:</strong><br><code>OnTime_Delivery_Rate = DIVIDE(CALCULATE(COUNTROWS(FactOrders), FactOrders[Status] = "Delivered", FactOrders[Is_Overdue_SLA] = 0), CALCULATE(COUNTROWS(FactOrders), FactOrders[Status] = "Delivered"), 0) * 100</code></p>
+                            <p><strong>3. AI_Flagged_Risk_Orders:</strong><br><code>AI_Flagged_Risk_Orders = CALCULATE(COUNTROWS(FactOrders), FactOrders[AI_Risk_Score] >= 70)</code></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 8: DRIVER APP UI -->
+            <section id="tab-driverapp" class="space-y-6 hidden">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-mobile-screen-button text-accent"></i> Driver App UI (Mô phỏng Giao diện Di động)
+                    </h2>
+                    <p class="text-xs text-gray-400">Giao diện mobile Dark Navy & Emerald Green dành cho tài xế với huy hiệu ETA 18 mins và bản đồ GPS.</p>
+                </div>
+
+                <div class="bg-darkcard border border-gray-800 p-6 rounded-xl flex flex-col items-center justify-center space-y-4 max-w-sm mx-auto shadow-2xl">
+                    <div class="w-full bg-gray-950 border-4 border-gray-800 rounded-3xl p-4 space-y-3">
+                        <div class="flex justify-between text-[10px] text-gray-400 border-b border-gray-800 pb-2">
+                            <span>11:30 PM</span>
+                            <span><i class="fa-solid fa-signal"></i> 5G <i class="fa-solid fa-battery-full text-emerald-400"></i></span>
+                        </div>
+                        <div class="bg-darkcard p-3 rounded-xl border border-gray-800 flex justify-between items-center">
+                            <div>
+                                <h4 class="text-xs font-bold text-white">Đỗ Văn Dương (TX-102)</h4>
+                                <p class="text-[10px] text-emerald-400">Trạng thái: Đang giao hàng</p>
+                            </div>
+                            <span class="bg-emerald-500/10 text-emerald-400 text-[10px] px-2 py-0.5 rounded border border-emerald-500/30">Online</span>
+                        </div>
+                        <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 text-xs space-y-1.5">
+                            <div class="flex justify-between text-gray-400"><span>Đơn hàng:</span><strong class="text-white">DH-8822</strong></div>
+                            <div class="flex justify-between text-gray-400"><span>Điểm đến:</span><strong class="text-white">144 Xuân Thủy, Cầu Giấy</strong></div>
+                            <div class="flex justify-between text-gray-400"><span>ETA Badge:</span><strong class="text-emerald-400 font-bold">18 mins</strong></div>
+                        </div>
+                        <button onclick="alert('Đã xác nhận Accept Order thành công trên App tài xế!')" class="w-full bg-accent hover:bg-accenthover text-darker font-bold py-2.5 rounded-xl text-xs transition">
+                            Accept Order / Nhận Đơn
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 9: SMART IOT VEHICLE -->
+            <section id="tab-iot" class="space-y-6 hidden">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-microchip text-cyan-300"></i> Smart IoT Vehicle Concept (Isometric 3D)
+                    </h2>
+                    <p class="text-xs text-gray-400">Giới thiệu mô hình phương tiện giao nhận thông minh tích hợp cảm biến IoT và hộp Smart Delivery Box.</p>
+                </div>
+
+                <div class="bg-darkcard border border-gray-800 p-6 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl space-y-2">
+                        <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded">IoT Sensor #01</span>
+                        <h4 class="text-sm font-bold text-white">Smart Delivery Box</h4>
+                        <p class="text-xs text-gray-300">Tích hợp cảm biến nhiệt độ thùng hàng và khóa điện tử tự động mở khi tới tọa độ giao.</p>
+                    </div>
+                    <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl space-y-2">
+                        <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded">GPS Tracking</span>
+                        <h4 class="text-sm font-bold text-white">Digital Route Lines</h4>
+                        <p class="text-xs text-gray-300">Hiển thị đường đi màu cyan thời gian thực, tự động né điểm ùn tắc giao thông.</p>
+                    </div>
+                    <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl space-y-2">
+                        <span class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded">Electric Vehicle</span>
+                        <h4 class="text-sm font-bold text-white">Green Fleet Management</h4>
+                        <p class="text-xs text-gray-300">Tối ưu năng lượng điện và giảm 18.2% lượng khí thải carbon chặng cuối.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE 10: DATA MANAGEMENT & SYSTEM SETTINGS -->
+            <section id="tab-settings" class="space-y-6 hidden">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-database text-purple-400"></i> Quản trị Dữ liệu & Backup Hệ Thống
+                    </h2>
+                    <p class="text-xs text-gray-400">Quản lý LocalStorage, sao lưu dữ liệu JSON, khôi phục hoặc thiết lập lại dữ liệu demo.</p>
+                </div>
+
+                <div class="bg-darkcard border border-gray-800 p-6 rounded-xl space-y-4">
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="backupSystemData()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-lg transition">
+                            <i class="fa-solid fa-download mr-1"></i> Sao Lưu Dữ Liệu (Backup JSON)
+                        </button>
+                        <button onclick="restoreSystemDataPrompt()" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs px-4 py-2.5 rounded-lg transition">
+                            <i class="fa-solid fa-upload mr-1"></i> Khôi Phục Dữ Liệu (Restore JSON)
+                        </button>
+                        <button onclick="resetDemoData()" class="bg-red-600 hover:bg-red-700 text-white font-semibold text-xs px-4 py-2.5 rounded-lg transition">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Khôi Phục Dữ Liệu Mẫu Ban Đầu (Reset)
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-400">Dữ liệu được lưu tự động trên LocalStorage của trình duyệt và duy trì ngay cả khi tải lại trang.</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL THÊM / SỬA ĐƠN HÀNG -->
+    <div id="orderModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-darkcard border border-gray-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                <h3 id="modalTitle" class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-box text-accent"></i> Tạo Đơn Hàng Mới</h3>
+                <button onclick="closeOrderModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <input type="hidden" id="editIndex" value="-1">
+                <div>
+                    <label class="text-gray-400 mb-1 block">Mã đơn hàng (Order ID)</label>
+                    <input type="text" id="modalId" value="DH-8830" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-accent">
+                </div>
+                <div>
+                    <label class="text-gray-400 mb-1 block">Tên khách hàng & Số điện thoại (Sẽ tự động che SĐT)</label>
+                    <input type="text" id="modalCustomer" value="Nguyễn Văn A - 0988123456" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-accent">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-gray-400 mb-1 block">Quãng đường (km)</label>
+                        <input type="number" id="modalDistance" value="6.5" step="0.1" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="text-gray-400 mb-1 block">Khu vực / Region</label>
+                        <select id="modalRegion" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-accent">
+                            <option value="Hà Nội">Hà Nội</option>
+                            <option value="Hải Dương">Hải Dương</option>
+                            <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-gray-400 mb-1 block">Tài xế phụ trách</label>
+                        <input type="text" id="modalDriver" value="TX-105 (Đỗ Văn Dương)" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-accent">
+                    </div>
+                    <div>
+                        <label class="text-gray-400 mb-1 block">Trạng thái đơn hàng</label>
+                        <select id="modalStatus" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-accent">
+                            <option value="Pending">Pending</option>
+                            <option value="In Transit">In Transit</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2 pt-2 border-t border-gray-800">
+                <button onclick="closeOrderModal()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded-lg text-xs">Hủy</button>
+                <button onclick="saveOrderData()" class="bg-accent hover:bg-accenthover text-darker font-semibold px-4 py-2 rounded-lg text-xs">Lưu Dữ Liệu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC TRUNG TÂM -->
+    <script>
+        // Dữ liệu gốc khởi tạo
+        const defaultOrders = [
+            { id: "DH-8821", customer: "Trần Thị B (0901234567)", distance: 4.8, staticEta: "21 phút", aiEta: "44 phút", driver: "TX-104 (Nguyễn Trọng Khôi)", status: "In Transit", risk: "HIGH", region: "Hà Nội", isOverdue: 1, cost: 15000 },
+            { id: "DH-8822", customer: "Lê Văn C (0912345678)", distance: 12.0, staticEta: "30 phút", aiEta: "32 phút", driver: "TX-102 (Đỗ Văn Dương)", status: "In Transit", risk: "LOW", region: "Hà Nội", isOverdue: 0, cost: 22000 },
+            { id: "DH-8823", customer: "Phạm Minh D (0938888888)", distance: 2.5, staticEta: "12 phút", aiEta: "15 phút", driver: "TX-101 (Trọng Khôi)", status: "Delivered", risk: "LOW", region: "Hải Dương", isOverdue: 0, cost: 12000 },
+            { id: "DH-8824", customer: "Hoàng Mai E (0977112233)", distance: 8.1, staticEta: "22 phút", aiEta: "55 phút", driver: "TX-108", status: "In Transit", risk: "HIGH", region: "Hà Nội", isOverdue: 1, cost: 18000 },
+            { id: "DH-8825", customer: "Ngô Văn F (0966554433)", distance: 5.0, staticEta: "18 phút", aiEta: "20 phút", driver: "TX-103", status: "Pending", risk: "MEDIUM", region: "Hồ Chí Minh", isOverdue: 0, cost: 14000 }
+        ];
+
+        let ordersData = JSON.parse(localStorage.getItem('smart_logistics_orders')) || defaultOrders;
+        let dispatchLogs = JSON.parse(localStorage.getItem('smart_logistics_logs')) || ["[11:00] Hệ thống khởi động thành công. Dữ liệu đã được nạp từ LocalStorage."];
+
+        let statusChartInstance = null;
+        let hourlyChartInstance = null;
+
+        window.onload = function() {
+            renderOrdersTable();
+            updateKPIs();
+            initCharts();
+            renderDispatchLogs();
+        };
+
+        // Chuyển tab giao diện
+        function switchTab(tabId) {
+            ['dashboard', 'orders', 'dispatch', 'promptlab', 'incident', 'chatbot', 'powerbi', 'driverapp', 'iot', 'settings'].forEach(t => {
+                document.getElementById('tab-' + t).classList.add('hidden');
+                document.getElementById('nav-' + t).classList.remove('bg-accent', 'text-darker', 'shadow-sm');
+                document.getElementById('nav-' + t).classList.add('text-gray-300', 'hover:bg-gray-800/60', 'hover:text-white');
+            });
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeNav = document.getElementById('nav-' + tabId);
+            activeNav.classList.remove('text-gray-300', 'hover:bg-gray-800/60', 'hover:text-white');
+            activeNav.classList.add('bg-accent', 'text-darker', 'shadow-sm');
+        }
+
+        // Lưu LocalStorage an toàn
+        function saveData() {
+            localStorage.setItem('smart_logistics_orders', JSON.stringify(ordersData));
+            localStorage.setItem('smart_logistics_logs', JSON.stringify(dispatchLogs));
+            updateKPIs();
+            if(statusChartInstance && hourlyChartInstance) updateCharts();
+        }
+
+        // Che số điện thoại bảo mật theo Nghị định 13/2023/NĐ-CP
+        function maskPhone(str) {
+            return str.replace(/(\d{3})\d{4}(\d{3})/, '$1****$2');
+        }
+
+        // Cập nhật KPI & Control Tower
+        function updateKPIs() {
+            const regionFilter = document.getElementById('kpiFilterRegion').value;
+            let filtered = regionFilter === 'ALL' ? ordersData : ordersData.filter(o => o.region === regionFilter);
+
+            let total = filtered.length;
+            let delivered = filtered.filter(o => o.status === 'Delivered').length;
+            let overdue = filtered.filter(o => o.isOverdue === 1 && o.status !== 'Cancelled').length;
+            let highRisk = filtered.filter(o => o.risk === 'HIGH' && (o.status === 'Pending' || o.status === 'In Transit')).length;
+            
+            let onTimeCount = delivered - filtered.filter(o => o.status === 'Delivered' && o.isOverdue === 1).length;
+            let onTimeRate = delivered > 0 ? ((onTimeCount / delivered) * 100).toFixed(1) : 100;
+
+            document.getElementById('kpi-total').innerText = total;
+            document.getElementById('kpi-ontime-rate').innerText = onTimeRate + '%';
+            document.getElementById('kpi-overdue').innerText = overdue;
+            document.getElementById('kpi-risk').innerText = highRisk;
+        }
+
+        // Render bảng đơn hàng
+        function renderOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            const keyword = document.getElementById('orderSearch').value.toLowerCase();
+            const statusVal = document.getElementById('filterStatus').value;
+            const riskVal = document.getElementById('filterRisk').value;
+
+            tbody.innerHTML = '';
+            let filtered = ordersData.filter(item => {
+                let matchKey = item.id.toLowerCase().includes(keyword) || item.customer.toLowerCase().includes(keyword) || item.driver.toLowerCase().includes(keyword);
+                let matchStatus = (statusVal === 'ALL') || (item.status === statusVal);
+                let matchRisk = (riskVal === 'ALL') || (item.risk === riskVal);
+                return matchKey && matchStatus && matchRisk;
+            });
+
+            filtered.forEach((item, index) => {
+                let riskBadge = '';
+                if(item.risk === 'HIGH') riskBadge = '<span class="bg-red-500/10 text-red-400 border border-red-500/30 px-2 py-0.5 rounded text-[10px] font-bold ml-1">High Risk</span>';
+                else if(item.risk === 'MEDIUM') riskBadge = '<span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded text-[10px] font-medium ml-1">Medium</span>';
+                else riskBadge = '<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-[10px] font-medium ml-1">Low</span>';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-800/40 transition">
+                        <td class="px-4 py-3 font-bold text-white">${item.id}</td>
+                        <td class="px-4 py-3 text-gray-300">${maskPhone(item.customer)}</td>
+                        <td class="px-4 py-3 text-gray-300">${item.distance} km (${item.region})</td>
+                        <td class="px-4 py-3 text-gray-400 line-through">${item.staticEta}</td>
+                        <td class="px-4 py-3 font-bold text-accent">${item.aiEta} ${riskBadge}</td>
+                        <td class="px-4 py-3 text-gray-300">${item.driver}</td>
+                        <td class="px-4 py-3"><span class="bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded text-[10px]">${item.status}</span></td>
+                        <td class="px-4 py-3 text-right space-x-2">
+                            <button onclick="openOrderModal('edit', ${ordersData.indexOf(item)})" class="text-gray-300 hover:text-white px-2 py-1 rounded bg-gray-800 text-[11px]"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteOrder(${ordersData.indexOf(item)})" class="text-red-400 hover:text-red-300 px-2 py-1 rounded bg-red-500/10 text-[11px]"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Thêm / Sửa đơn hàng Modal
+        function openOrderModal(mode, index = -1) {
+            document.getElementById('orderModal').classList.remove('hidden');
+            if(mode === 'add') {
+                document.getElementById('modalTitle').innerHTML = '<i class="fa-solid fa-box text-accent"></i> Tạo Đơn Hàng Mới';
+                document.getElementById('editIndex').value = -1;
+                document.getElementById('modalId').value = 'DH-' + Math.floor(1000 + Math.random() * 9000);
+                document.getElementById('modalCustomer').value = 'Khách hàng mới - 0909123456';
+                document.getElementById('modalDistance').value = 5.0;
+            } else {
+                document.getElementById('modalTitle').innerHTML = '<i class="fa-solid fa-pen text-accent"></i> Chỉnh Sửa Đơn Hàng';
+                document.getElementById('editIndex').value = index;
+                let item = ordersData[index];
+                document.getElementById('modalId').value = item.id;
+                document.getElementById('modalCustomer').value = item.customer;
+                document.getElementById('modalDistance').value = item.distance;
+                document.getElementById('modalRegion').value = item.region || 'Hà Nội';
+                document.getElementById('modalDriver').value = item.driver;
+                document.getElementById('modalStatus').value = item.status;
+            }
+        }
+
+        function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
+
+        function saveOrderData() {
+            let index = parseInt(document.getElementById('editIndex').value);
+            let id = document.getElementById('modalId').value.trim();
+            let customer = document.getElementById('modalCustomer').value.trim();
+            let distance = parseFloat(document.getElementById('modalDistance').value);
+            let region = document.getElementById('modalRegion').value;
+            let driver = document.getElementById('modalDriver').value.trim();
+            let status = document.getElementById('modalStatus').value;
+
+            if(!id || !customer) {
+                alert('Vui lòng điền đầy đủ mã đơn hàng và tên khách hàng!');
+                return;
+            }
+
+            let aiEtaMin = Math.round(distance * 3.5 + (status === 'In Transit' ? 15 : 5));
+            let riskVal = distance > 10 ? 'HIGH' : (distance > 5 ? 'MEDIUM' : 'LOW');
+
+            let orderObj = {
+                id: id,
+                customer: customer,
+                distance: distance,
+                staticEta: Math.round(distance * 2) + ' phút',
+                aiEta: aiEtaMin + ' phút',
+                driver: driver,
+                status: status,
+                risk: riskVal,
+                region: region,
+                isOverdue: aiEtaMin > 40 ? 1 : 0,
+                cost: Math.round(distance * 2500 + 10000)
+            };
+
+            if(index === -1) {
+                // Kiểm tra trùng ID
+                if(ordersData.some(o => o.id === id)) {
+                    alert('Mã đơn hàng đã tồn tại trong hệ thống!');
+                    return;
+                }
+                ordersData.unshift(orderObj);
+                dispatchLogs.unshift(`[${new Date().toLocaleTimeString()}] Đã tạo mới đơn hàng ${id} (${region}).`);
+            } else {
+                ordersData[index] = orderObj;
+                dispatchLogs.unshift(`[${new Date().toLocaleTimeString()}] Đã cập nhật thông tin đơn hàng ${id}.`);
+            }
+
+            saveData();
+            renderOrdersTable();
+            renderDispatchLogs();
+            closeOrderModal();
+        }
+
+        function deleteOrder(index) {
+            if(confirm('Xác nhận xóa đơn hàng này khỏi hệ thống?')) {
+                let removedId = ordersData[index].id;
+                ordersData.splice(index, 1);
+                dispatchLogs.unshift(`[${new Date().toLocaleTimeString()}] Đã xóa đơn hàng ${removedId}.`);
+                saveData();
+                renderOrdersTable();
+                renderDispatchLogs();
+            }
+        }
+
+        // Thực thi kịch bản điều phối TX-05
+        function executeDispatchScenario() {
+            ordersData.forEach(o => {
+                if(o.driver.includes('TX-05') || o.status === 'In Transit') {
+                    o.driver = 'TX-102 (Đỗ Văn Dương - Hỗ trợ)';
+                    o.risk = 'LOW';
+                    o.isOverdue = 0;
+                }
+            });
+            dispatchLogs.unshift(`[${new Date().toLocaleTimeString()}] ĐIỀU PHỐI THÀNH CÔNG: Đã san tải đơn hàng từ TX-05 sang TX-102. Các đơn hàng đã được tái định tuyến.`);
+            saveData();
+            renderOrdersTable();
+            renderDispatchLogs();
+            alert('Đã thực thi điều phối thành công! Trạng thái các đơn hàng liên quan đã được cập nhật.');
+        }
+
+        function renderDispatchLogs() {
+            const box = document.getElementById('dispatchLogBox');
+            if(box) {
+                box.innerHTML = dispatchLogs.map(log => `<p>${log}</p>`).join('');
+            }
+        }
+
+        // Prompt Engineering Lab
+        function runPromptLab() {
+            const output = document.getElementById('labPromptOutput');
+            output.innerText = "AI đang xử lý Prompt theo cấu trúc 5 thành phần (Role, Task, Input, Constraints, Output)...\n";
+            setTimeout(() => {
+                output.innerText = `| Risk Level | Predicted Delay Minutes | Recommended Dispatch Action |\n| :--- | :--- | :--- |\n| HIGH | +35 phút | San tải đơn hàng sang tài xế lân cận TX-102; định tuyến tránh vành đai 3 do ngập lụt. |\n\n[Giải thích mô hình]: Đơn hàng DH-8821 chịu tác động của thời tiết mưa lớn (Heavy Rain) làm giảm vận tốc trung bình xuống còn 10 km/h.`;
+            }, 800);
+        }
+
+        function copyPromptResult() {
+            const text = document.getElementById('labPromptOutput').innerText;
+            navigator.clipboard.writeText(text);
+            alert('Đã sao chép kết quả prompt vào clipboard!');
+        }
+
+        // LogiBot NLP Assistant
+        function sendChat() {
+            let input = document.getElementById('chatInput');
+            let msg = input.value.trim();
+            if(!msg) return;
+
+            let box = document.getElementById('chatMessages');
+            box.innerHTML += `<div class="flex justify-end"><div class="bg-emerald-500 text-darker p-3 rounded-2xl rounded-tr-none max-w-md font-medium">${msg}</div></div>`;
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+
+            setTimeout(() => {
+                let reply = "LogiBot đã quét cơ sở dữ liệu. Không tìm thấy thông tin cụ thể theo yêu cầu của bạn.";
+                let found = ordersData.find(o => msg.toUpperCase().includes(o.id));
+                if(found) {
+                    reply = `Kết quả tra cứu đơn hàng <strong>${found.id}</strong>:\n- Khách hàng: ${maskPhone(found.customer)}\n- Trạng thái: ${found.status}\n- ETA AI: ${found.aiEta}\n- Tài xế: ${found.driver}\n- Mức độ rủi ro: ${found.risk}`;
+                } else if(msg.toLowerCase().includes('xin chào') || msg.toLowerCase().includes('hi')) {
+                    reply = "Xin chào bạn! Tôi là trợ lý ảo LogiBot, chuyên hỗ trợ tra cứu đơn hàng và điều phối Logistics chặng cuối.";
+                }
+                box.innerHTML += `<div class="flex items-start space-x-2"><div class="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center text-accent shrink-0"><i class="fa-solid fa-robot text-xs"></i></div><div class="bg-gray-900 border border-gray-800 p-3 rounded-2xl rounded-tl-none max-w-md text-gray-200">${reply}</div></div>`;
+                box.scrollTop = box.scrollHeight;
+            }, 800);
+        }
+        function handleChatKey(e) { if(e.key === 'Enter') sendChat(); }
+
+        // Power BI CSV Export
+        function exportCSV(type) {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            if(type === 'FactOrders') {
+                csvContent += "OrderID,ShipperID,OrderDate,DeliveryDate,Status,Is_Overdue_SLA,AI_Risk_Score,FreightCost,Weight,Distance,Region,DeliveryHour\n";
+                ordersData.forEach(o => {
+                    csvContent += `${o.id},SHP01,2026-11-15,2026-11-15,${o.status},${o.isOverdue},${o.risk === 'HIGH' ? 85 : 40},${o.cost},1.5,${o.distance},${o.region},18\n`;
+                });
+            } else {
+                csvContent += "ShipperID,ShipperName,VehicleType,Capacity,Status\n";
+                csvContent += "SHP01,Đỗ Văn Dương,Xe máy điện,50kg,Active\n";
+                csvContent += "SHP02,Nguyễn Trọng Khôi,Xe tải nhẹ,500kg,Active\n";
+            }
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", type + ".csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Backup & Restore
+        function backupSystemData() {
+            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ordersData));
+            let dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", "smart_logistics_backup.json");
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+        }
+
+        function restoreSystemDataPrompt() {
+            let jsonInput = prompt("Dán nội dung chuỗi JSON backup vào đây để khôi phục:");
+            if(jsonInput) {
+                try {
+                    ordersData = JSON.parse(jsonInput);
+                    saveData();
+                    renderOrdersTable();
+                    updateKPIs();
+                    alert("Khôi phục dữ liệu hệ thống thành công!");
+                } catch(e) {
+                    alert("Định dạng JSON không hợp lệ!");
+                }
+            }
+        }
+
+        function resetDemoData() {
+            if(confirm("Xác nhận khôi phục lại toàn bộ dữ liệu mẫu ban đầu?")) {
+                ordersData = JSON.parse(JSON.stringify(defaultOrders));
+                dispatchLogs = ["[11:00] Đã reset hệ thống về dữ liệu mẫu ban đầu."];
+                saveData();
+                renderOrdersTable();
+                updateKPIs();
+                renderDispatchLogs();
+                alert("Đã reset dữ liệu thành công!");
+            }
+        }
+
+        // Khởi tạo biểu đồ Chart.js
+        function initCharts() {
+            const ctxDonut = document.getElementById('statusDonutChart').getContext('2d');
+            statusChartInstance = new Chart(ctxDonut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Delivered', 'In Transit', 'Pending', 'Cancelled'],
+                    datasets: [{
+                        data: [
+                            ordersData.filter(o => o.status === 'Delivered').length,
+                            ordersData.filter(o => o.status === 'In Transit').length,
+                            ordersData.filter(o => o.status === 'Pending').length,
+                            ordersData.filter(o => o.status === 'Cancelled').length
+                        ],
+                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#9ca3af', font: { size: 11 } } } } }
+            });
+
+            const ctxBar = document.getElementById('hourlyBarChart').getContext('2d');
+            hourlyChartInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '17:00 (Peak)', '18:00 (Peak)', '20:00'],
+                    datasets: [{
+                        label: 'Sản lượng đơn hàng',
+                        data: [15, 28, 45, 30, 38, 75, 82, 25],
+                        backgroundColor: '#10b981',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#9ca3af', font: { size: 10 } }, grid: { display: false } },
+                        y: { ticks: { color: '#9ca3af', font: { size: 10 } }, grid: { color: '#1f2937' } }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            if(statusChartInstance) {
+                statusChartInstance.data.datasets[0].data = [
+                    ordersData.filter(o => o.status === 'Delivered').length,
+                    ordersData.filter(o => o.status === 'In Transit').length,
+                    ordersData.filter(o => o.status === 'Pending').length,
+                    ordersData.filter(o => o.status === 'Cancelled').length
+                ];
+                statusChartInstance.update();
+            }
+        }
+    </script>
+</body>
+</html>
